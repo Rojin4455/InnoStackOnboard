@@ -6,6 +6,7 @@ import GenerateTokens from '../components/GenerateTokens';
 import GenerateAuthCode from '../components/GenerateAuthCode';
 import StatusIndicator from '../components/StatusIndicator';
 import { toast } from 'sonner';
+import OnboardedLocations from '../components/OnboarderLocations';
 
 function OAuthFlowComponent() {
   const [authCode, setAuthCode] = useState(null);
@@ -14,6 +15,7 @@ function OAuthFlowComponent() {
   const [error, setError] = useState(null);
   const [isTokenLoading, setIsTokenLoading] = useState(false);
   const [isSubmit, setIsSubmit] = useState(true)
+  const navigate = useNavigate()
 
   const query = new URLSearchParams(useLocation().search);
   const code = query.get('code');
@@ -45,6 +47,8 @@ const scopes = [
     "contacts.readonly",
     "conversations/reports.readonly",
     "conversations/livechat.write",
+    "companies.readonly",
+    "locations.readonly",
 ]
 
   
@@ -77,8 +81,24 @@ const scopes = [
         },
       });
 
-      setToken(response.data);
-      setIsTokenLoading(false);
+      const nameResponse = await axios.get(
+        `https://services.leadconnectorhq.com/locations/${response.data.locationId}`,
+        {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${response.data.access_token}`,
+            Version: "2021-07-28",
+          },
+        }
+      );
+      
+      console.log("Location Response:", nameResponse.data.location.name);
+      
+
+      setToken({
+        ...response.data,
+        name: nameResponse.data.location.name,
+      });      setIsTokenLoading(false);
     } catch (err) {
       console.error("Error fetching token:", err);
       setError(err.response?.data?.error_description || "Failed to fetch token");
@@ -86,12 +106,10 @@ const scopes = [
     }
   };
 
-  // Reset auth flow
   const resetFlow = () => {
     setAuthCode(null);
     setToken(null);
     setError(null);
-    // setIsSubmit()
   };
 
 
@@ -108,7 +126,8 @@ const scopes = [
             scope: token.scope,
             token_type: token.token_type,
             user_id: token.userId,
-            user_type: token.userType
+            user_type: token.userType,
+            account_name:token.name
         })
 
         if (response.status === 201) {
@@ -127,9 +146,17 @@ const scopes = [
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="bg-indigo-600 py-6 px-6">
-          <h1 className="text-2xl font-bold text-white">OAuth Authentication Flow</h1>
-          <p className="text-indigo-100 mt-1">Connect with GoHighLevel API</p>
+      <div className="bg-indigo-600 py-6 px-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-white">OAuth Authentication Flow</h1>
+            <p className="text-indigo-100 mt-1">Connect with GoHighLevel API</p>
+          </div>
+          <button
+            onClick={() => navigate("/locations")}
+            className="bg-white text-indigo-600 font-medium py-2 px-4 rounded-lg shadow-md hover:bg-gray-100 transition"
+          >
+            View Locations
+          </button>
         </div>
         
         <div className="p-8">

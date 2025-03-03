@@ -16,7 +16,8 @@ function StatusIndicator({authCode, token}) {
       <span className="text-sm text-gray-600">Get Authorization Code</span>
       <span className="text-sm text-gray-600">Generate Access Token</span>
     </div>
-  </div>  )
+  </div>  
+)
 }
 
 export default StatusIndicator

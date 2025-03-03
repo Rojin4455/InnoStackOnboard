@@ -1,7 +1,17 @@
-import React from 'react'
+import React,{useState} from 'react'
+import { Clipboard, Check } from "lucide-react"; // Importing icons from Lucide React
+
 
 function GenerateTokens({authCode, token, error, fetchToken, isTokenLoading}) {
     console.log("token: ", token)
+
+    const [copiedField, setCopiedField] = useState(null);
+
+    const copyToClipboard = (value, field) => {
+      navigator.clipboard.writeText(value);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000); // Reset after 2s
+    };
   return (
     <div className="mb-6">
             <div className={`bg-gray-50 p-6 rounded-lg border ${!authCode ? 'border-gray-200 opacity-50' : 'border-gray-200'}`}>
@@ -9,50 +19,83 @@ function GenerateTokens({authCode, token, error, fetchToken, isTokenLoading}) {
               
               {token ? (
                 <div className="mb-4">
-                  <div className="flex items-center mb-2">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-2">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                      </svg>
-                    </div>
-                    <span className="text-green-700 font-medium">Access Token Generated</span>
+                <div className="flex items-center mb-2">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-2">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
                   </div>
-                  
-                  <div className="bg-gray-100 p-4 rounded mb-4">
-                  <div className="mb-2">
-  <span className="font-medium mr-2">Access Token:</span>
-  <code className="text-sm break-all">
-    {token.access_token
-      ? `${token.access_token.substring(0, 25)}...${token.access_token.substring(token.access_token.length - 10)}`
-      : "Access token available"}
-  </code>
-</div>
-
-                    <div className="mb-2">
-                      <span className="font-medium mr-2">Token Type:</span>
-                      <code className="text-sm">{token.token_type}</code>
-                    </div>
-                    <div className="mb-2">
-                      <span className="font-medium mr-2">Expires In:</span>
-                      <code className="text-sm">{token.expires_in} seconds</code>
-                    </div>
-                    <div className="mb-2">
-                      <span className="font-medium mr-2">Location Id:</span>
-                      <code className="text-sm">{token.locationId}</code>
-                    </div>
-                    {token.refresh_token && (
-                      <div>
-                        <span className="font-medium mr-2">Refresh Token:</span>
-                        <code className="text-sm break-all">
-                            {token.refresh_token
-                            ? `${token.refresh_token.substring(0,25)}...${token.refresh_token.substring(token.refresh_token.length-10)}`
-                            : "Refresh Token is not available"
-                        }
-                            </code>
-                      </div>
-                    )}
-                  </div>
+                  <span className="text-green-700 font-medium">Access Token Generated</span>
                 </div>
+              
+                <div className="bg-gray-100 p-4 rounded mb-4">
+                <div className="flex items-center justify-between w-full">
+  <span className="font-medium">Access Token:</span>
+  <div className="flex-1 ml-2 break-all">
+    <code className="text-sm">
+      {token.access_token
+        ? `${token.access_token.substring(0, 25)}...${token.access_token.substring(token.access_token.length - 10)}`
+        : "Access token available"}
+    </code>
+  </div>
+  <button
+    onClick={() => copyToClipboard(token.access_token, "access_token")}
+    className="ml-2 text-gray-500 hover:text-gray-700 transition"
+  >
+    {copiedField === "access_token" ? <Check className="w-5 h-5 text-green-600" /> : <Clipboard className="w-5 h-5" />}
+  </button>
+</div>
+              
+                  <div className="mb-2">
+                    <span className="font-medium mr-2">Token Type:</span>
+                    <code className="text-sm">
+                      {token.token_type ? `${token.token_type.substring(0, 10)}...` : "N/A"}
+                    </code>
+                  </div>
+              
+                  <div className="mb-2">
+                    <span className="font-medium mr-2">Expires In:</span>
+                    <code className="text-sm">
+                      {token.expires_in ? `${token.expires_in} seconds` : "N/A"}
+                    </code>
+                  </div>
+              
+                  <div className="flex items-center justify-between w-full">
+  <span className="font-medium">Location Id:</span>
+  <div className="flex-1 ml-2 break-all">
+    <code className="text-sm">
+      {token.locationId ? `${token.locationId.substring(0, 10)}...` : "N/A"}
+    </code>
+  </div>
+  <button
+    onClick={() => copyToClipboard(token.locationId, "location_id")}
+    className="ml-2 text-gray-500 hover:text-gray-700 transition"
+  >
+    {copiedField === "location_id" ? <Check className="w-5 h-5 text-green-600" /> : <Clipboard className="w-5 h-5" />}
+  </button>
+</div>
+              
+                  {token.refresh_token && (
+                    <div className="flex items-center justify-between w-full">
+                    <span className="font-medium">Refresh Token:</span>
+                    <div className="flex-1 ml-2 break-all">
+                        <code className="text-sm">
+                        {token.refresh_token
+                            ? `${token.refresh_token.substring(0, 25)}...${token.refresh_token.substring(token.refresh_token.length - 10)}`
+                            : "Refresh Token is not available"}
+                        </code>
+                    </div>
+                    <button
+                        onClick={() => copyToClipboard(token.refresh_token, "refresh_token")}
+                        className="ml-2 text-gray-500 hover:text-gray-700 transition"
+                    >
+                        {copiedField === "refresh_token" ? <Check className="w-5 h-5 text-green-600" /> : <Clipboard className="w-5 h-5" />}
+                    </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
               ) : (
                 <p className="text-gray-600 mb-4">
                   {authCode 
