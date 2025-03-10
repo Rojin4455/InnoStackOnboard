@@ -5,6 +5,7 @@ import axios from 'axios';
 import { toast } from "sonner";
 import { setUser } from '../slices/userSlice';
 import { useDispatch } from 'react-redux';
+import Loading from '../components/Loading';
 
 
 export default function LoginPage() {
@@ -72,18 +73,18 @@ const [loading, setLoading] = useState(true);
     axios.get(`${REACT_APP_BASE_API_URL}/accounts/check-auth/`, { withCredentials: true })
         .then(response => {
             if (response.data.is_authenticated) {
-                navigate("/home"); // Redirect if authenticated
+                navigate("/home");
             } else {
-                setLoading(false); // Allow login form to show
+                setLoading(false);
             }
         })
         .catch(error => {
-            setLoading(false); // Show login form if not authenticated
+            setLoading(false);
         });
 }, [navigate]);
 
 if (loading) {
-    return <p>Loading...</p>; // Show a loader while checking auth
+    return <Loading loading={loading} />; 
 }
 
   
