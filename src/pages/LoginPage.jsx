@@ -95,7 +95,7 @@ if (loading) {
         <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold mb-2">Welcome back</h1>
-            <p className="text-gray-600">Sign in to continue to Spotlight</p>
+            <p className="text-gray-600">Sign in to continue to InnoStack Onboard</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
