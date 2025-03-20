@@ -26,7 +26,7 @@ function OAuthFlowComponent() {
   const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET;
   const REDIRECT_URI = process.env.REACT_APP_BASE_URL;
   
-  const TOKEN_URL = "https://services.gohighlevel.com/oauth/token";
+  const TOKEN_URL = "https://services.leadconnectorhq.com/oauth/token";
   const PREV = "https://marketplace.gohighlevel.com/oauth/chooselocation";
   const BASE_API_URL = process.env.REACT_APP_BASE_API_URL
 
